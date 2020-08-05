@@ -1,13 +1,15 @@
 from collections import namedtuple
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from gym.spaces import Discrete
 
 from playground.policies.base import BaseModelMixin, Config, Policy
 from playground.policies.memory import ReplayMemory, Transition
 from playground.utils.misc import plot_learning_curve
 from playground.utils.tf_ops import dense_nn
+
+tf.compat.v1.disable_eager_execution()
 
 
 class ActorCriticPolicy(Policy, BaseModelMixin):

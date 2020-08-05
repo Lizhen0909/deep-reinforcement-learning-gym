@@ -29,7 +29,7 @@ class Policy:
 
         if deterministic:
             np.random.seed(1)
-            tf.set_random_seed(1)
+            tf.random.set_seed(2)
 
     @property
     def act_size(self):
@@ -104,8 +104,8 @@ class BaseModelMixin:
         self.tf_sess_config = tf_sess_config
 
     def scope_vars(self, scope, only_trainable=True):
-        collection = tf.GraphKeys.TRAINABLE_VARIABLES if only_trainable else tf.GraphKeys.VARIABLES
-        variables = tf.get_collection(collection, scope=scope)
+        collection = tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES if only_trainable else tf.compat.v1.GraphKeys.VARIABLES
+        variables = tf.compat.v1.get_collection(collection, scope=scope)
         assert len(variables) > 0
         print(f"Variables in scope '{scope}':")
         for v in variables:
@@ -113,7 +113,7 @@ class BaseModelMixin:
         return variables
 
     def get_variable_values(self):
-        t_vars = tf.trainable_variables()
+        t_vars = tf.compat.v1.trainable_variables()
         vals = self.sess.run(t_vars)
         return {v.name: value for v, value in zip(t_vars, vals)}
 
@@ -167,19 +167,19 @@ class BaseModelMixin:
     @property
     def saver(self):
         if self._saver is None:
-            self._saver = tf.train.Saver(max_to_keep=5)
+            self._saver = tf.compat.v1.train.Saver(max_to_keep=5)
         return self._saver
 
     @property
     def writer(self):
         if self._writer is None:
-            self._writer = tf.summary.FileWriter(self.tb_dir, self.sess.graph)
+            self._writer = tf.compat.v1.summary.FileWriter(self.tb_dir, self.sess.graph)
         return self._writer
 
     @property
     def sess(self):
         if self._sess is None:
-            config = tf.ConfigProto(**self.tf_sess_config)
-            self._sess = tf.Session(config=config)
+            config = tf.compat.v1.ConfigProto(**self.tf_sess_config)
+            self._sess = tf.compat.v1.Session(config=config)
 
         return self._sess

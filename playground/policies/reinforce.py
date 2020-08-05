@@ -1,5 +1,5 @@
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from playground.policies.base import BaseModelMixin, Policy, TrainConfig
 from playground.utils.misc import plot_learning_curve
 from playground.utils.tf_ops import dense_nn

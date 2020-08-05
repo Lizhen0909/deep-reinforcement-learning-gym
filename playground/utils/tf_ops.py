@@ -1,6 +1,8 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+import tensorflow 
 import numpy as np
 from gym.utils import colorize
+
 
 
 def dense_nn(inputs, layers_sizes, name="mlp", reuse=False, output_fn=None, dropout_keep_prob=None,
@@ -21,7 +23,7 @@ def dense_nn(inputs, layers_sizes, name="mlp", reuse=False, output_fn=None, drop
                 size,
                 # Add relu activation only for internal layers.
                 activation=tf.nn.relu if i < len(layers_sizes) - 1 else None,
-                kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                kernel_initializer=tensorflow.initializers.GlorotUniform(),
                 name=name + '_l' + str(i),
                 reuse=reuse
             )
@@ -122,7 +124,7 @@ def lstm_net(inputs, layers_sizes, name='lstm', step_size=16, lstm_layers=1, lst
     def _make_cell():
         cell = tf.nn.rnn_cell.LSTMCell(lstm_size, state_is_tuple=True, reuse=not training)
         if training and dropout_keep_prob:
-            cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=dropout_keep_prob)
+            cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=dropout_keep_prob)
         return cell
 
     with tf.variable_scope(name):
@@ -135,7 +137,7 @@ def lstm_net(inputs, layers_sizes, name='lstm', step_size=16, lstm_layers=1, lst
             # After transpose, inputs.get_shape() = (num_steps, batch_size, lstm_size)
             lstm_inputs = tf.transpose(inputs, [1, 0, 2])
 
-            cell = tf.contrib.rnn.MultiRNNCell([
+            cell = tf.nn.rnn_cell.MultiRNNCell([
                 _make_cell() for _ in range(lstm_layers)], state_is_tuple=True)
             lstm_outputs, lstm_states = tf.nn.dynamic_rnn(cell, lstm_inputs, dtype=tf.float32)
 

@@ -1,5 +1,5 @@
 {
-  "env_name": "BipedalWalker-v2",
+  "env_name": "BipedalWalker-v3",
   "policy_name": "DDPGPolicy",
   "policy_params": {
     "gamma": 0.99,
